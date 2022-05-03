@@ -1,0 +1,496 @@
+\documentclass[10pt, a4paper, onecolumn, oneside, titlepage, openany]{book}
+
+\usepackage[T1]{fontenc}    %% TeX text extended - most European characters
+\usepackage[utf8]{inputenc} %% UTF-8 support
+\usepackage{menukeys}       %% keyboads keys, menu + includes '\definecolor'
+
+\usepackage{hyperref}       %% URL and reference support
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,         %% \ref{}
+    filecolor=magenta,      %% \href{run:./file.txt}{File.txt}
+    urlcolor=cyan,          %% \href{http://www.overleaf.com}{Link}
+    pdfpagemode=FullScreen,
+    pdftitle={Void}
+}
+
+\usepackage{titlesec}       %% chapter formatting (N. CHAPTER-NAME)
+\renewcommand{\chaptername}{}
+\titleformat{\chapter}[hang]{\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter.}{1em}{}
+
+\usepackage{fancyhdr}       %% decorative lines
+\renewcommand{\headrulewidth}{2pt}
+\renewcommand{\footrulewidth}{2pt}
+\pagestyle{fancy}
+\fancyhf{}
+    \chead{\leftmark}
+    \cfoot{\thepage}
+\fancypagestyle{plain}{
+\fancyhf{}
+    \chead{\leftmark}
+    \cfoot{\thepage}
+}
+
+%% table formatting
+\usepackage[format=hang,font=small,labelfont=bf]{caption} %% bold table caption
+\setlength{\arrayrulewidth}{0.5mm}                        %% border
+\setlength{\tabcolsep}{18pt}                              %% space from border (X axis)
+\renewcommand{\arraystretch}{1.5}                         %% space from border (Y axis)
+
+%% colors
+\definecolor{bg}{RGB}{240, 240, 240}
+\definecolor{root}{RGB}{222, 0, 0}
+\definecolor{user}{RGB}{0, 150, 0}
+\definecolor{command}{RGB}{41, 182, 0}
+\definecolor{block}{RGB}{255, 80, 0}
+\definecolor{dir}{RGB}{0, 100, 200}
+\definecolor{file}{RGB}{77, 187, 101}
+\definecolor{comment}{RGB}{0, 182, 182}
+
+\definecolor{keyword}{RGB}{204, 204, 0}
+
+%% code formatting
+\usepackage{fancyvrb}
+\renewcommand{\FancyVerbFormatLine}[1]{\colorbox{bg}{#1}}
+
+%% text file content formatting
+\usepackage{listings}
+%% Docs: https://texdoc.org/serve/listings.pdf/0 ; https://en.m.wikibooks.org/wiki/LaTeX/Source_Code_Listings ; % https://gordonlesti.com/custom-code-highlighting-in-latex/
+
+\lstdefinelanguage{linux_file}{
+    morekeywords = [1]{source,clear,set,umask,export},
+    morekeywords = [2]{if,then,else,fi},
+    sensitive = false,
+    morecomment = [l]{\#},
+    morestring = [b]",
+    morestring = [b]',
+}
+
+\lstset{
+    language = linux_file,
+    basicstyle = \ttfamily,
+    columns=fullflexible,
+    keywordstyle = [1],%\color{command},
+    keywordstyle = [2]\color{keyword},
+    stringstyle = \color{block},
+    commentstyle = \color{comment},
+    keepspaces = true,
+    numbers = left,
+    firstnumber = 1,
+    stepnumber = 1,
+    numberstyle = \small\color{file},
+    showspaces = false,
+    showstringspaces = false,
+    showtabs = false,
+    breaklines = true,
+    breakatwhitespace = false,
+    breakindent=0pt,
+    %postbreak=\space,
+    %prebreak=\char92,
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% title page '\maketitle'
+\title{\textbf{Void}}
+\author{AISK11}
+\date{May 2022}
+
+%% LaTeX content
+\begin{document}
+\maketitle
+\tableofcontents
+
+\chapter{System Info}
+\begin{table}[!ht]
+\centering
+\begin{tabular}{|c|c|}
+    \hline
+    \textbf{Hardware} & \textbf{Value} \\
+    \hline
+    CPU architecture & amd64 (x86\_64)\\
+    CPU vendor & intel\\
+    Motherboard & UEFI\\
+    Hard Drive & NVMe\\
+    Ethernet & r8169 (or r8168)\\
+    WiFi & iwlwifi\\
+    GPU & Intel + Nvidia\\
+    \hline
+\end{tabular}
+\caption{System hardware overview.}
+\label{table:system_hardware_overview}
+\end{table}
+
+\begin{table}[!ht]
+\centering
+\begin{tabular}{|c|c|}
+    \hline
+    \textbf{Void Linux} & \textbf{Value} \\
+    \hline
+    Architecutre & amd64 (x86\_64)\\
+    C library & glibc\\
+    ISO Image & x86\_64-glibc\\
+    \hline
+\end{tabular}
+\caption{Void Linux overview.}
+\label{table:void_linux_overview}
+\end{table}
+
+\begin{table}[!ht]
+\centering
+\begin{tabular}{|c|c|}
+    \hline
+    \textbf{Software} & \textbf{Value} \\
+    \hline
+    RAID & -\\
+    LVM & -\\
+    Encryption & LUKS\\
+    Root filesystem & btrfs\\
+    SWAP & 2 GB (file)\\
+    Bootloader & rEFInd\\
+    Kernel & ?\\
+    Initramfs & ?\\
+    Init & runit\\
+    Shell & ?\\
+    Virtualization & ?\\
+    \hline
+\end{tabular}
+\caption{System software overview.}
+\label{table:system_software_overview}
+\end{table}
+
+\begin{table}[!ht]
+\centering
+\begin{tabular}{|c|c|}
+    \hline
+    \textbf{Software} & \textbf{Value} \\
+    \hline
+    Display server & Xorg\\
+    Window manager & ?\\
+    Desktop environment & -\\
+    Terminal emulator & ?\\
+    \hline
+\end{tabular}
+\caption{Display software overview.}
+\label{table:display_software_overview}
+\end{table}
+
+
+
+\chapter{Download And Boot}
+\section{Download}
+\begin{enumerate}
+    \item \textbf{Download (ISO, checksum, signature and Void release key):}
+    \begin{itemize}
+        \item \textbf{Download website:}
+        \begin{itemize}
+            \item \url{https://voidlinux.org/download/}
+        \end{itemize}
+        \item \textbf{Latest image repo (image + checksum + signature):}
+        \begin{itemize}
+            \item \url{https://alpha.de.repo.voidlinux.org/live/current/}
+        \end{itemize}
+        \item \textbf{Mirrors:}
+        \begin{itemize}
+            \item \url{https://docs.voidlinux.org/xbps/repositories/mirrors/index.html}
+        \end{itemize}
+        \item \textbf{Void release keys:}
+        \begin{itemize}
+            \item \url{https://github.com/void-linux/void-packages/tree/master/srcpkgs/void-release-keys/files/}
+        \end{itemize}
+    \end{itemize}
+    \item \textbf{Verify download:}
+    \begin{enumerate}
+        \item \textbf{Verify ISO integrity via checksum:}
+\begin{Verbatim}[commandchars=\\\{\}]
+\textcolor{user}{user\$} \textcolor{command}{sha256sum} -c --ignore-missing <\textcolor{file}{sha256sum.txt}>
+<\textcolor{file}{void-live-x86_64-YYYYMMDD.iso}>
+\end{Verbatim}
+        \item \textbf{Verify checksum authenticity for ISO:}
+\begin{Verbatim}[commandchars=\\\{\}]
+\textcolor{user}{user\$} \textcolor{command}{signify} -V -p <\textcolor{file}{void-release-YYYYMMDD.pub}>
+-x <\textcolor{file}{sha256sum.sig}> -m <\textcolor{file}{sha256sum.txt}>
+\end{Verbatim}
+    \end{enumerate}
+\end{enumerate}
+
+
+\section{Prepare USB:}
+\begin{enumerate}
+    \item \textbf{Unmount USB FS!}
+    \item \textbf{Flash image to USB:}
+\begin{Verbatim}[commandchars=\\\{\}]
+\textcolor{root}{root#} \textcolor{command}{dd} if=<\textcolor{file}{void-live-x86_64-YYYYMMDD.iso}> of=<\textcolor{block}{/dev/sdX}>
+[bs=4M] [status=progress] ; \textcolor{command}{sync}
+\end{Verbatim}
+\end{enumerate}
+
+
+\section{Boot USB}
+\subsection{Disable Secure Boot}
+\begin{enumerate}
+    \item \textbf{During POST press key to access BIOS/UEFI:}
+\newline \href{https://techofide.com/blogs/boot-menu-option-keys-for-all-computers-and-laptops-updated-list-2021-techofide/}{https://techofide.com/blogs/boot-menu-option-keys-for-all-computers-and-laptops-updated-list-2021-techofide/}
+    \item \textbf{Disable Secure Boot.}
+    \item \textbf{Poweroff/Restart.}
+\end{enumerate}
+\subsection{Boot}
+\begin{enumerate}
+    \item \textbf{Plug in flashed USB.}
+    \item \textbf{During POST press key to access Boot Menu:}
+\newline \href{https://techofide.com/blogs/boot-menu-option-keys-for-all-computers-and-laptops-updated-list-2021-techofide/}{https://techofide.com/blogs/boot-menu-option-keys-for-all-computers-and-laptops-updated-list-2021-techofide/}
+    \item \textbf{Select USB entry (UEFI).}
+\end{enumerate}
+
+
+
+\chapter{Pre-Installation}
+\section{Login}
+\begin{enumerate}
+    \item \textbf{Login to the system:}
+\begin{Verbatim}[commandchars=\\\{\}]
+\textcolor{root}{>} root
+\textcolor{root}{>} voidlinux
+\end{Verbatim}
+\end{enumerate}
+
+
+\section{Change shell}
+\begin{enumerate}
+    \item \textbf{Change shell to bash:}
+\begin{Verbatim}[commandchars=\\\{\}]
+\textcolor{root}{root#} \textcolor{command}{bash}
+\end{Verbatim}
+\end{enumerate}
+
+
+\section{Disable pcspkr @CHECK}
+\begin{enumerate}
+    \item \textbf{See if pcspkr is active:}
+\begin{Verbatim}[commandchars=\\\{\}]
+\textcolor{root}{root#} \textcolor{command}{lsmod} | \textcolor{command}{grep} -i pcspkr
+\end{Verbatim}
+    \item \textbf{Disable pcspkr module:}
+\begin{Verbatim}[commandchars=\\\{\}]
+\textcolor{root}{root#} \textcolor{command}{modprobe} -r pcspkr
+\end{Verbatim}
+\end{enumerate}
+
+
+\section{Verify UEFI}
+\begin{itemize}
+    \item \textbf{UEFI is used if following directory exists:}
+\newline \textbf{\textcolor{dir}{/sys/firmware/efi/}}
+    \item \textbf{Verify via kernel:}
+\begin{Verbatim}[commandchars=\\\{\}]
+\textcolor{root}{root#} \textcolor{command}{dmesg} | \textcolor{command}{grep} -i efi
+\end{Verbatim}
+\end{itemize}
+
+
+\section{Configure Internet @TODO}
+
+
+\section{Install Additional Software @TODO}
+
+
+\section{Disks}
+\subsection{Theory}
+\begin{itemize}
+    \item \textbf{Sector:} smallest unit size on disk. 512 or 4096 bytes (Advanced Format). 4096 Advanced Format disks have usually 512-byte conversion firmware.
+    \item \textbf{Block:} allocation size the FS uses. Cannot be smaller than size of the sector. Can be group of sectors (4096b: 8 x 512b sectors).
+    \begin{itemize}
+        \item \textbf{512b =} good for lot of small files. More blocks = more metadata.
+        \item \textbf{4096b =}  good for larger files, less metadata. Waste if there are mostly small files.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Disk Information}
+\begin{itemize}
+    \item \textbf{Find disks (block devices):}
+\begin{Verbatim}[commandchars=\\\{\}]
+\textcolor{user}{user\$} \textcolor{command}{lsblk} [-a] [-p] [-f]
+\textcolor{root}{root#} \textcolor{command}{fdisk -l} [\textcolor{block}{/dev/sdX}]
+\textcolor{root}{root#} \textcolor{command}{blkid}
+\end{Verbatim}
+    \item \textbf{Get raw disk info:}
+    \begin{itemize}
+        \item \textbf{Get disk physical sector size:}
+\begin{Verbatim}[commandchars=\\\{\}]
+\textcolor{root}{root#} \textcolor{command}{blockdev} [-v] --getpbsz <\textcolor{block}{/dev/sdX[Y]}>
+\end{Verbatim}
+        \item \textbf{Get disk logical sector size (usually 512):}
+\begin{Verbatim}[commandchars=\\\{\}]
+\textcolor{root}{root#} \textcolor{command}{blockdev} [-v] --getss <\textcolor{block}{/dev/sdX[Y]}>
+\end{Verbatim}
+        \item \textbf{Disk size in bytes:}
+\begin{Verbatim}[commandchars=\\\{\}]
+\textcolor{root}{root#} \textcolor{command}{blockdev} [-v] --getsize64 <\textcolor{block}{/dev/sdX[Y]}>
+\end{Verbatim}
+    \item \textbf{Check if disk is readonly (1 = ro, 0 = rw):}
+\begin{Verbatim}[commandchars=\\\{\}]
+\textcolor{root}{root#} \textcolor{command}{blockdev} [-v] --getro <\textcolor{block}{/dev/sdX[Y]}>
+\end{Verbatim}
+    \end{itemize}
+    \item \textbf{See partitions:}
+\begin{Verbatim}[commandchars=\\\{\}]
+\textcolor{root}{root#} \textcolor{command}{parted} -s <\textcolor{block}{/dev/sdX}> (p)rint [free]
+\end{Verbatim}
+\end{itemize}
+
+\subsection{Bad Sectors Check}
+\begin{enumerate}
+    \item \textbf{Unmount FS!}
+    \item \textbf{Check disk for bad blocks:}
+\begin{Verbatim}[commandchars=\\\{\}]
+\textcolor{root}{root#} \textcolor{command}{badblocks} [-b 4096] [-w [-t 0xaa]] [-v] [-s]
+<\textcolor{block}{/dev/sdX[Y]}> [-o <\textcolor{file}{OUTPUT.txt}>]
+\end{Verbatim}
+\end{enumerate}
+
+
+
+\chapter{Installation}
+\section{Disk Preparation}
+\subsection{Disk Partitioning}
+\begin{enumerate}
+    \item \textbf{Umount every FS from the disk that is going to be partitioned!}
+    \item \textbf{Create partitions:}
+    \begin{enumerate}
+        \item \textbf{Enter cfdisk:}
+\begin{Verbatim}[commandchars=\\\{\}]
+\textcolor{root}{root#} \textcolor{command}{cfdisk} -z <\textcolor{block}{/dev/sdX}>
+\end{Verbatim}
+        \item \textbf{Create partition table:}
+\begin{Verbatim}[commandchars=\\\{\}]
+\textcolor{root}{cfdisk>} \textcolor{command}{gpt} (Enter)
+\end{Verbatim}
+        \item \textbf{Create EFI partition:}
+\begin{Verbatim}[commandchars=\\\{\}]
+\textcolor{root}{cfdisk>} \textcolor{command}{n}
+\textcolor{root}{cfdisk>} \textcolor{command}{550MiB}
+\textcolor{root}{cfdisk>} \textcolor{command}{t}
+\textcolor{root}{cfdisk>} \textcolor{command}{EFI System}
+\end{Verbatim}
+        \item \textbf{Create LUKS partition:}
+\begin{Verbatim}[commandchars=\\\{\}]
+\textcolor{root}{cfdisk>} \textcolor{command}{n}
+\textcolor{root}{cfdisk>} \textcolor{command}{} (Enter)
+\end{Verbatim}
+        \item \textbf{Write changes:}
+\begin{Verbatim}[commandchars=\\\{\}]
+\textcolor{root}{cfdisk>} \textcolor{command}{W}
+\textcolor{root}{cfdisk>} \textcolor{command}{yes}
+\end{Verbatim}
+        \item \textbf{Quit cfdisk:}
+\begin{Verbatim}[commandchars=\\\{\}]
+\textcolor{root}{cfdisk>} \textcolor{command}{Q}
+\end{Verbatim}
+        \item \textbf{Name partitions:}
+\begin{Verbatim}[commandchars=\\\{\}]
+\textcolor{root}{root#} \textcolor{command}{parted} -s <\textcolor{block}{/dev/sdX}> name 1 ESP
+\textcolor{root}{root#} \textcolor{command}{parted} -s <\textcolor{block}{/dev/sdX}> name 2 LUKS
+\end{Verbatim}
+    \end{enumerate}
+    \item \textbf{Create filesystems:}
+    \begin{enumerate}
+        \item \textbf{ESP (VFAT32):}
+\begin{Verbatim}[commandchars=\\\{\}]
+\textcolor{root}{root#} \textcolor{command}{wipefs} -a <\textcolor{block}{/dev/sdX1}>
+\textcolor{root}{root#} \textcolor{command}{mkfs.vfat} -F 32 <\textcolor{block}{/dev/sdX1}>
+\textcolor{root}{root#} \textcolor{command}{fatlabel} <\textcolor{block}{/dev/sdX1}> ESP
+\textcolor{root}{root#} \textcolor{command}{fatlabel} -i <\textcolor{block}{/dev/sdX1}> 00000001
+\textcolor{root}{root#} \textcolor{command}{fsck.vfat} -v <\textcolor{block}{/dev/sdX1}> ; \textcolor{command}{echo} \$?
+\end{Verbatim}
+        \item \textbf{LUKS:}
+\begin{Verbatim}[commandchars=\\\{\}]
+\textcolor{root}{root#} \textcolor{command}{wipefs} -a <\textcolor{block}{/dev/sdX2}>
+\textcolor{root}{root#} \textcolor{command}{cryptsetup} luksFormat -y --type luks2 <\textcolor{block}{/dev/sdX2}>
+\textcolor{root}{>} YES
+\textcolor{root}{>} <NEW_LUKS_PASSWORD>
+\textcolor{root}{>} <NEW_LUKS_PASSWORD (VERIFY)>
+\textcolor{root}{root#} \textcolor{command}{cryptsetup} config --label LUKS <\textcolor{block}{/dev/sdX2}>
+\textcolor{root}{root#} \textcolor{command}{cryptsetup} luksUUID --uuid
+00000000-0000-0000-0000-000000000002 <\textcolor{block}{/dev/sdX2}>
+\textcolor{root}{>} YES
+\textcolor{root}{root#} \textcolor{command}{cryptsetup} open --type luks2 <\textcolor{block}{/dev/sdX2}>
+luks-root
+\textcolor{root}{>} <PASSWORD>
+\end{Verbatim}
+        \item \textbf{Root FS (btrfs):}
+\begin{Verbatim}[commandchars=\\\{\}]
+\textcolor{root}{root#} \textcolor{command}{wipefs} -a \textcolor{block}{/dev/mapper/luks-root}
+\textcolor{root}{root#} \textcolor{command}{mkfs.btrfs} \textcolor{block}{/dev/mapper/luks-root}
+\textcolor{root}{root#} \textcolor{command}{btrfs} filesystem label \textcolor{block}{/dev/mapper/luks-root}
+LUKS-ROOT
+\textcolor{root}{root#} \textcolor{command}{btrfstune} -U 00000000-0000-0000-0000-000000000003
+\textcolor{block}{/dev/mapper/luks-root}
+\textcolor{root}{>} y
+\textcolor{root}{root#} \textcolor{command}{btrfs} check -p \textcolor{block}{/dev/mapper/luks-root} ; \textcolor{command}{echo} \$?
+\end{Verbatim}
+    \end{enumerate}
+    \item \textbf{Finish and clean:}
+\begin{Verbatim}[commandchars=\\\{\}]
+\textcolor{root}{root#} \textcolor{command}{cryptsetup} close \textcolor{block}{/dev/mapper/luks-root}
+\end{Verbatim}
+\end{enumerate}
+
+\subsection{LUKS Cheatsheet:}
+\begin{itemize}
+    \item \textbf{Open LUKS:}
+\begin{Verbatim}[commandchars=\\\{\}]
+\textcolor{root}{root#} \textcolor{command}{cryptsetup} open --type luks <\textcolor{block}{/dev/sdX2}> <luks>
+> <PASSWORD>
+\end{Verbatim}
+    \item \textbf{Close LUKS:}
+\begin{Verbatim}[commandchars=\\\{\}]
+\textcolor{root}{root#} \textcolor{command}{cryptsetup} close <\textcolor{block}{/dev/mapper/luks}>
+\end{Verbatim}
+    \item \textbf{LUKS header:}
+    \begin{enumerate}
+        \item \textbf{See LUKS header:}
+\begin{Verbatim}[commandchars=\\\{\}]
+\textcolor{root}{root#} \textcolor{command}{cryptsetup} luksDump <\textcolor{block}{/dev/sdX2}>
+\end{Verbatim}
+        \item \textbf{Make LUKS header backup:}
+\begin{Verbatim}[commandchars=\\\{\}]
+\textcolor{root}{root#} \textcolor{command}{cryptsetup} luksHeaderBackup <\textcolor{block}{/dev/sdX2}>
+--header-backup-file <\textcolor{file}{FILE}>
+\end{Verbatim}
+        \item \textbf{Destroy LUKS header:}
+\begin{Verbatim}[commandchars=\\\{\}]
+\textcolor{root}{root#} \textcolor{command}{cryptsetup} luksErase <\textcolor{block}{/dev/sdX2}>
+> YES
+\end{Verbatim}
+        \item \textbf{Restore LUKS header:}
+\begin{Verbatim}[commandchars=\\\{\}]
+\textcolor{root}{root#} \textcolor{command}{cryptsetup} luksHeaderRestore <\textcolor{block}{/dev/sdX2}>
+--header-backup-file <\textcolor{file}{FILE}>
+> YES
+\end{Verbatim}
+    \end{enumerate}
+    \item \textbf{Passwords}
+    \begin{itemize}
+        \item \textbf{Change password:}
+\begin{Verbatim}[commandchars=\\\{\}]
+\textcolor{root}{root#} \textcolor{command}{cryptsetup} luksChangeKey <\textcolor{block}{/dev/sdX2}> [-S 0]
+> <OLD_PASSWORD>
+> <NEW_PASSWORD>
+> <NEW_PASSWORD (VERIFY)>
+\end{Verbatim}
+        \item \textbf{Add another key:}
+\begin{Verbatim}[commandchars=\\\{\}]
+\textcolor{root}{root#} \textcolor{command}{cryptsetup} luksAddKey <\textcolor{block}{/dev/sdX2}> [-S 7]
+> <ANY_KEY_PASSWORD>
+> <NEW_KEY_PASSWORD>
+> <NEWKEY_PASSWORD (VERIFY)>
+\end{Verbatim}
+        \item \textbf{Delete key:}
+\begin{Verbatim}[commandchars=\\\{\}]
+\textcolor{root}{root#} \textcolor{command}{cryptsetup} luksKillSlot <\textcolor{block}{/dev/sdX2}> [7]
+> <ANY_KEY_PASSWORD>
+\end{Verbatim}
+    \end{itemize}
+\end{itemize}
+
+\end{document}
